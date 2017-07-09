@@ -20,15 +20,17 @@ data = []
 for line in file:
     data.append(line)
 
-test = 'party,n,n,n,n,n,n,n,n,n,n,n,n,n,n,n,n'
-test = test.split(',')
-likelihood = []
-d_count = 0
-r_count = 0
+test_1 = 'party,n,n,n,n,n,n,n,n,n,n,n,n,n,n,n,n'
+test_1 = test_1.split(',')
 
+test_2 = 'party,y,y,y,y,y,y,y,y,y,y,y,y,y,y,y,y'
+test_2 = test_2.split(',')
 
-p_r = 0
-p_d = 0
+test_3 = 'party,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?'
+test_3 = test_3.split(',')
+
+test_4 = 'party,n,n,y,y,y,y,y,n,n,n,n,y,y,y,n,y'
+test_4 = test_4.split(',')
 
 
 # This function is to get the Class Prior Probability of Democrat
@@ -54,7 +56,7 @@ def multiply(likelihood):
 
 
 # This function is to get posterior probability of 'democrat' without normalization
-def posterior_democrat(test_ticket):
+def posterior_democrat(data:list,test_ticket:list):
     likelihood = []
     for i in range(1,len(test_ticket)):
         counter = 1         # For Zero Frequency Problem !!
@@ -73,11 +75,45 @@ def posterior_democrat(test_ticket):
     return result
 
 
+def posterior_republican(data:list, test_ticket:list):
+    r_likelihood = []
+    for i in range(1,len(test_ticket)):
+        counter = 1         # For Zero Frequency Problem !!
+        r_counter = 3       # For Zero Frequency Problem !!
+        for j in range(0, len(data)):
+            train_ticket = data[j].split(',')
+            if train_ticket[0] == 'republican':
+                r_counter = r_counter + 1
+                if train_ticket[i] == test_ticket[i]:
+                    counter = counter + 1
+        r_likelihood.append(counter/r_counter)
+
+    prior_pr = r_counter/len(data)
+    total = multiply(r_likelihood)
+    result = total*prior_pr
+    return result
 
 
-posterior = posterior_democrat(test)
+# This function is to normalize the probability
+# Return the posterior probability of democrat
+def d_normalize(posterior_R:float, posterior_D: float):
+    return posterior_D/(posterior_R + posterior_D)
 
-print("{:.2e}".format(posterior))
+
+# Bayes Function
+def bayes(data:list, test_ticket:list):
+    posterior_R = posterior_republican(data, test_ticket)
+    posterior_D = posterior_democrat(data, test_ticket)
+    return d_normalize(posterior_R, posterior_D)
+
+
+print("Democrat:", posterior_democrat(data,test_4))
+print("Republican:", posterior_republican(data, test_4))
+
+estimate = bayes(data, test_4)
+print(estimate)
+
+
 
 
 
