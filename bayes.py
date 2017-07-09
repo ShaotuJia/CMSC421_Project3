@@ -59,8 +59,8 @@ def multiply(likelihood):
 def posterior_democrat(data:list,test_ticket:list):
     likelihood = []
     for i in range(1,len(test_ticket)):
-        counter = 1         # For Zero Frequency Problem !!
-        d_counter = 3       # For Zero Frequency Problem !!
+        counter = 1         # For Zero Frequency Problem; add ONE for one of choices(y, n, ?) !!
+        d_counter = 3       # For Zero Frequency Problem; add ONE for all three choices(y,n,?) !!
         for j in range(0, len(data)):
             train_ticket = data[j].split(',')
             if train_ticket[0] == 'democrat':
@@ -78,8 +78,8 @@ def posterior_democrat(data:list,test_ticket:list):
 def posterior_republican(data:list, test_ticket:list):
     r_likelihood = []
     for i in range(1,len(test_ticket)):
-        counter = 1         # For Zero Frequency Problem !!
-        r_counter = 3       # For Zero Frequency Problem !!
+        counter = 1         # For Zero Frequency Problem; add ONE for one of choices(y, n, ?) !!
+        r_counter = 3       # For Zero Frequency Problem; add ONE for all three choices(y,n,?) !!
         for j in range(0, len(data)):
             train_ticket = data[j].split(',')
             if train_ticket[0] == 'republican':
