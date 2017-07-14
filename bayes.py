@@ -10,27 +10,23 @@
 # Example: P(D|a,b,c,d) = P(a,b,c,d|D)*P(D)/P(a,b,c,d) = alpha*P(a,b,c,d|D)*P(D)
 # Example: P(a,b,c,d|R) = P(a|R)*P(b|R)*P(c|R)*P(d|R) # naive bayes, conditional independence
 # !! In case Zero Frequency Problem !!!
-from functools import reduce
 
+import sys
 
-filename = "house-votes-84.data"
-file = open(filename, "r")
+# Obtain train data from file
+train_file_name = sys.argv[1]
+train_file = open(train_file_name, "r")
 
 data = []
-for line in file:
+for line in train_file:
     data.append(line)
 
-test_1 = 'party,n,n,n,n,n,n,n,n,n,n,n,n,n,n,n,n'
-test_1 = test_1.split(',')
-
-test_2 = 'party,y,y,y,y,y,y,y,y,y,y,y,y,y,y,y,y'
-test_2 = test_2.split(',')
-
-test_3 = 'party,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?'
-test_3 = test_3.split(',')
-
-test_4 = 'party,n,n,y,y,y,y,y,n,n,n,n,y,y,y,n,y'
-test_4 = test_4.split(',')
+# Obtain classify data from file
+classify_file_name = sys.argv[2]
+classify_file = open(classify_file_name, "r")
+classify_data = []
+for line in classify_file:
+    classify_data.append(line)
 
 
 # This function is to get the Class Prior Probability of Democrat
@@ -107,14 +103,15 @@ def bayes(data:list, test_ticket:list):
     return d_normalize(posterior_R, posterior_D)
 
 
-print("Democrat:", posterior_democrat(data,test_4))
-print("Republican:", posterior_republican(data, test_4))
+# Print the result for a series of classify data
+def output(data: list, classify_data: list):
+    for ticket in classify_data:     # Tickets are stored as 'str' in data set
+        ticket = ticket.split(',')   # convert str to list for bayes function
+        pr = bayes(data, ticket)
+        print("The Probability of being a democrat: ", pr)
 
-estimate = bayes(data, test_4)
-print(estimate)
-
-
-
+# Print results
+output(data, classify_data)
 
 
 
