@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+# Author: Shaotu Jia
 # Brief: This project is to estimate probability that each record in classify.data is a democrat representative
 # Assumption: at first, assume that each field is independent to others
 # Step 1: Load train data Set
@@ -9,22 +10,21 @@
 # Example: P(R|a,b,c,d) = P(a,b,c,d|R)*P(R)/P(a,b,c,d) = alpha*P(a,b,c,d|R)*P(R)
 # Example: P(D|a,b,c,d) = P(a,b,c,d|D)*P(D)/P(a,b,c,d) = alpha*P(a,b,c,d|D)*P(D)
 # Example: P(a,b,c,d|R) = P(a|R)*P(b|R)*P(c|R)*P(d|R) # naive bayes, conditional independence
-# !! In case Zero Frequency Problem !!!
+# !! In case of Zero Frequency Problem !!!
 
 import sys
 
 # Obtain train data from file
 train_file_name = sys.argv[1]
 train_file = open(train_file_name, "r")
-
-data = []
+data = []                                       # The data set of training data
 for line in train_file:
     data.append(line)
 
 # Obtain classify data from file
 classify_file_name = sys.argv[2]
 classify_file = open(classify_file_name, "r")
-classify_data = []
+classify_data = []                              # The data set of classify data
 for line in classify_file:
     classify_data.append(line)
 
@@ -43,6 +43,7 @@ def democrat_pr(data):
     return d_count/data_size
 
 
+# This function is to multiply every element together
 def multiply(likelihood):
     result = 1
     amplifier = 5
@@ -55,8 +56,8 @@ def multiply(likelihood):
 def posterior_democrat(data:list,test_ticket:list):
     likelihood = []
     for i in range(1,len(test_ticket)):
-        counter = 1         # For Zero Frequency Problem; add ONE for one of choices(y, n, ?) !!
-        d_counter = 3       # For Zero Frequency Problem; add ONE for all three choices(y,n,?) !!
+        counter = 1                 # For Zero Frequency Problem; add ONE for one of choices(y, n, ?) !!
+        d_counter = 3               # For Zero Frequency Problem; add ONE for all three choices(y,n,?) !!
         for j in range(0, len(data)):
             train_ticket = data[j].split(',')
             if train_ticket[0] == 'democrat':
@@ -70,12 +71,12 @@ def posterior_democrat(data:list,test_ticket:list):
     result = total*prior_pr
     return result
 
-
+# This function is to get posterior probability of 'republican' without normalization
 def posterior_republican(data:list, test_ticket:list):
     r_likelihood = []
     for i in range(1,len(test_ticket)):
-        counter = 1         # For Zero Frequency Problem; add ONE for one of choices(y, n, ?) !!
-        r_counter = 3       # For Zero Frequency Problem; add ONE for all three choices(y,n,?) !!
+        counter = 1                     # For Zero Frequency Problem; add ONE for one of choices(y, n, ?) !!
+        r_counter = 3                   # For Zero Frequency Problem; add ONE for all three choices(y,n,?) !!
         for j in range(0, len(data)):
             train_ticket = data[j].split(',')
             if train_ticket[0] == 'republican':
@@ -96,7 +97,7 @@ def d_normalize(posterior_R:float, posterior_D: float):
     return posterior_D/(posterior_R + posterior_D)
 
 
-# Bayes Function
+# Bayes Function, return normalized posterior probability of democrat
 def bayes(data:list, test_ticket:list):
     posterior_R = posterior_republican(data, test_ticket)
     posterior_D = posterior_democrat(data, test_ticket)
